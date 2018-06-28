@@ -24,6 +24,10 @@ kitti
 1. mayavi 
 2. vtk
 
+```
+pip install mayavi vtk
+```
+
 ## Visualization
 
 1. 3D boxes on LiDar point cloud in volumetric mode
@@ -33,12 +37,16 @@ kitti
 
 
 ```python
+python kitti_object.py
+```
+Specific your own folder,
+```python
 python kitti_object.py /path/to/kitti/object
 ```
 
 ## Demo
 
-#### 2D, 3D boxes LiDar data on Camera image
+#### 2D, 3D boxes and LiDar data on Camera image
 <img src="./rgb.png" alt="2D, 3D boxes LiDar data on Camera image" align="center" />
 #### LiDar birdview and point cloud (3D) 
 <img src="./lidar.png" alt="LiDar point cloud and birdview" align="center" />

@@ -252,7 +252,7 @@ def dataset_viz(root_dir):
 if __name__=='__main__':
     import mayavi.mlab as mlab
     from viz_util import draw_lidar_simple, draw_lidar, draw_gt_boxes3d
-    root_dir="/home/sensetime/data/kitti"
+    root_dir="data/object"
     if len(sys.argv)>=2:
         root_dir= sys.argv[1]
     
