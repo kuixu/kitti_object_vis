@@ -474,7 +474,7 @@ def compute_orientation_3d(obj, P):
     orientation_2d = project_to_image(np.transpose(orientation_3d), P);
     return orientation_2d, np.transpose(orientation_3d)
 
-def draw_projected_box3d(image, qs, color=(255,255,255), thickness=2):
+def draw_projected_box3d(image, qs, color=(0,255,0), thickness=2):
     ''' Draw 3d bounding box in image
         qs: (8,3) array of vertices for the 3d box in following order:
             1 -------- 0
@@ -541,4 +541,3 @@ def draw_box3d_on_top(image, boxes3d, color=(255,255,255), thickness=1,scores=No
         text_pos = (5, 25*(n+1))
         cv2.putText(img, text_lables[n], text_pos, font, 0.5, (0, 255, 100), 0, cv2.LINE_AA)
     return  img
-

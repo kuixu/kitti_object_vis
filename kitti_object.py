@@ -220,7 +220,7 @@ def show_lidar_topview_with_boxes(pc_velo, objects, calib):
     boxes3d = [bbox3d(obj) for obj in objects if obj.type!='DontCare']
     gt = np.array(boxes3d)
     #text = "gt: %s" % str(gt.shape)
-    lines = [ obj.type for obj in objects if obj.type!='DontCare' ] 
+    lines = [ obj.type for obj in objects if obj.type!='DontCare' ]
     top_image = utils.draw_box3d_on_top(top_image, gt, text_lables=lines, scores=None, thickness=1, is_gt=True)
 
     Image.fromarray(top_image).show()
@@ -242,7 +242,7 @@ def dataset_viz(root_dir):
         show_lidar_topview_with_boxes(pc_velo, objects, calib)
         pc_velo= pc_velo[:,0:3]
         # Draw 2d and 3d boxes on image
-        show_image_with_boxes(img, objects, calib, False)
+        show_image_with_boxes(img, objects, calib, True)
         # Draw 3d box in LiDAR point cloud
         show_lidar_with_boxes(pc_velo, objects, calib, True, img_width, img_height)
         # Show LiDAR points on image.
@@ -255,5 +255,5 @@ if __name__=='__main__':
     root_dir="data/object"
     if len(sys.argv)>=2:
         root_dir= sys.argv[1]
-    
+
     dataset_viz(root_dir)
