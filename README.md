@@ -47,9 +47,9 @@ python kitti_object.py /path/to/kitti/object
 ## Demo
 
 #### 2D, 3D boxes and LiDar data on Camera image
-<img src="./rgb.png" alt="2D, 3D boxes LiDar data on Camera image" align="center" />
+<img src="./imgs/rgb.png" alt="2D, 3D boxes LiDar data on Camera image" align="center" />
 #### LiDar birdview and point cloud (3D) 
-<img src="./lidar.png" alt="LiDar point cloud and birdview" align="center" />
+<img src="./imgs/lidar.png" alt="LiDar point cloud and birdview" align="center" />
 
 
 ## Acknowlegement
