@@ -2,7 +2,7 @@
 
 
 
-## Dataset 
+## Dataset
 
 Download the data (calib, image\_2, label\_2, velodyne) from [Kitti Object Detection Dataset](http://www.cvlibs.net/datasets/kitti/eval_object.php?obj_benchmark=3d) and place it in your data folder at `kitti/object`
 
@@ -21,7 +21,7 @@ kitti
 
 ## Requrements
 
-1. mayavi 
+1. mayavi
 2. vtk
 
 ```
@@ -41,15 +41,28 @@ python kitti_object.py
 ```
 Specific your own folder,
 ```python
-python kitti_object.py /path/to/kitti/object
+python kitti_object.py --dir /path/to/kitti/object
 ```
 
 ## Demo
 
 #### 2D, 3D boxes and LiDar data on Camera image
 <img src="./imgs/rgb.png" alt="2D, 3D boxes LiDar data on Camera image" align="center" />
-#### LiDar birdview and point cloud (3D) 
+
+#### LiDar birdview and point cloud (3D)
 <img src="./imgs/lidar.png" alt="LiDar point cloud and birdview" align="center" />
+
+## Show Predicted Results
+
+Firstly, map KITTI official formated results into data directory
+```
+./map_pred.sh /path/to/results
+```
+
+```python
+python kitti_object.py --pred
+```
+<img src="./imgs/pred.png" alt="Show Predicted Results" align="center" />
 
 
 ## Acknowlegement

@@ -35,7 +35,7 @@ def draw_lidar_simple(pc, color=None):
     mlab.view(azimuth=180, elevation=70, focalpoint=[ 12.0909996 , -1.04700089, -2.03249991], distance=62.0, figure=fig)
     return fig
 
-def draw_lidar(pc, color=None, fig=None, bgcolor=(0,0,0), pts_scale=1, pts_mode='point', pts_color=None):
+def draw_lidar(pc, color=None, fig=None, bgcolor=(0,0,0), pts_scale=0.3, pts_mode='sphere', pts_color=None):
     ''' Draw lidar points
     Args:
         pc: numpy array (n,3) of XYZ

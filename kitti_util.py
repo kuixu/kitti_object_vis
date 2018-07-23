@@ -205,6 +205,24 @@ class Calibration(object):
         pts_3d_rect = self.project_velo_to_rect(pts_3d_velo)
         return self.project_rect_to_image(pts_3d_rect)
 
+    def project_8p_to_4p(self, pts_2d):
+        x0 = np.min(pts_2d[:,0])
+        x1 = np.max(pts_2d[:,0])
+        y0 = np.min(pts_2d[:,1])
+        y1 = np.max(pts_2d[:,1])
+        x0 = max(0,x0)
+        #x1 = min(x1, proj.image_width)
+        y0 = max(0,y0)
+        #y1 = min(y1, proj.image_height)
+        return np.array([x0, y0, x1, y1])
+
+    def project_velo_to_4p(self, pts_3d_velo):
+        ''' Input: nx3 points in velodyne coord.
+            Output: 4 points in image2 coord.
+        '''
+        pts_2d_velo = self.project_velo_to_image(pts_3d_velo)
+        return self.project_8p_to_4p(pts_2d_velo)
+
     # ===========================
     # ------- 2d to 3d ----------
     # ===========================
@@ -384,6 +402,64 @@ def lidar_to_top(lidar):
 
     return top
 
+MATRIX_Mt = np.array([[  2.34773698e-04,   1.04494074e-02,   9.99945389e-01,  0.00000000e+00],
+                  [ -9.99944155e-01,   1.05653536e-02,   1.24365378e-04,  0.00000000e+00],
+                  [ -1.05634778e-02,  -9.99889574e-01,   1.04513030e-02,  0.00000000e+00],
+                  [  5.93721868e-02,  -7.51087914e-02,  -2.72132796e-01,  1.00000000e+00]])
+
+MATRIX_Kt = np.array([[ 721.5377,    0.    ,    0.    ],
+                  [   0.    ,  721.5377,    0.    ],
+                  [ 609.5593,  172.854 ,    1.    ]])
+
+def box3d_to_rgb_box00(box3d):
+
+    #box3d = boxes3d[n]
+    Ps = np.hstack(( box3d, np.ones((8,1))) )
+    Qs = np.matmul(Ps,MATRIX_Mt)
+    Qs = Qs[:,0:3]
+    qs = np.matmul(Qs,MATRIX_Kt)
+    zs = qs[:,2].reshape(8,1)
+    qs = (qs/zs)
+
+    return qs[:,0:2]
+
+
+def box3d_to_rgb_box0000(boxes3d, Mt=None, Kt=None):
+    #if (cfg.DATA_SETS_TYPE == 'kitti'):
+    if Mt is None: Mt = np.array(MATRIX_Mt)
+    if Kt is None: Kt = np.array(MATRIX_Kt)
+
+    num  = len(boxes3d)
+    projections = np.zeros((num,8,2),  dtype=np.int32)
+    for n in range(num):
+        box3d = boxes3d[n]
+        Ps = np.hstack(( box3d, np.ones((8,1))) )
+        Qs = np.matmul(Ps,Mt)
+        Qs = Qs[:,0:3]
+        qs = np.matmul(Qs,Kt)
+        zs = qs[:,2].reshape(8,1)
+        qs = (qs/zs)
+        #pts_3d=project_to_image(qs[:,0:2], P)
+        projections[n] = qs[:,0:2]
+        #projections[n] = proj3d_to_2d(qs[:,0:2])
+        #projections[n] = pts_3d
+    return projections
+
+
+def proj3d_to_2d(rgbpoint):
+    x0 = np.min(rgbpoint[:,0])
+    x1 = np.max(rgbpoint[:,0])
+    y0 = np.min(rgbpoint[:,1])
+    y1 = np.max(rgbpoint[:,1])
+    #x0 = max(0,x0)
+    #x1 = min(x1, proj.image_width)
+    #y0 = max(0,y0)
+    #y1 = min(y1, proj.image_height)
+    return np.array([x0, y0, x1, y1])
+
+
+
+
 def project_to_image(pts_3d, P):
     ''' Project 3d points to image plane.
 
@@ -515,6 +591,7 @@ def draw_box3d_on_top(image, boxes3d, color=(255,255,255), thickness=1,scores=No
     font = cv2.FONT_HERSHEY_SIMPLEX
     img = image.copy()
     num =len(boxes3d)
+    startx =5
     for n in range(num):
         b   = boxes3d[n]
         x0 = b[0,0]
@@ -531,13 +608,15 @@ def draw_box3d_on_top(image, boxes3d, color=(255,255,255), thickness=1,scores=No
         u3,v3=lidar_to_top_coords(x3,y3)
         if is_gt:
             color = (0, 255, 0)
+            startx = 5
         else:
             color=heat_map_rgb(0.,1., scores[n]) if scores is not None else 255
+            startx = 85
         cv2.line(img, (u0,v0), (u1,v1), color, thickness, cv2.LINE_AA)
         cv2.line(img, (u1,v1), (u2,v2), color, thickness, cv2.LINE_AA)
         cv2.line(img, (u2,v2), (u3,v3), color, thickness, cv2.LINE_AA)
         cv2.line(img, (u3,v3), (u0,v0), color, thickness, cv2.LINE_AA)
     for n in range(len(text_lables)):
-        text_pos = (5, 25*(n+1))
-        cv2.putText(img, text_lables[n], text_pos, font, 0.5, (0, 255, 100), 0, cv2.LINE_AA)
+        text_pos = (startx, 25*(n+1))
+        cv2.putText(img, text_lables[n], text_pos, font, 0.5, color, 0, cv2.LINE_AA)
     return  img
