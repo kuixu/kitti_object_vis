@@ -308,9 +308,9 @@ if __name__=='__main__':
     from viz_util import draw_lidar_simple, draw_lidar, draw_gt_boxes3d
 
     parser = argparse.ArgumentParser(description='PyTorch Training RPN')
-    parser.add_argument('--dir', type=str, default="data/object", metavar='N',
+    parser.add_argument('-d', '--dir', type=str, default="data/object", metavar='N',
                         help='input  (default: data/object)')
-    parser.add_argument('--pred', action='store_true', help='show predict results')
+    parser.add_argument('-p','--pred', action='store_true', help='show predict results')
     args = parser.parse_args()
     if args.pred:
         assert os.path.exists(args.dir+"/training/pred")

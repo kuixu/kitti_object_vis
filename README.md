@@ -41,7 +41,7 @@ python kitti_object.py
 ```
 Specific your own folder,
 ```python
-python kitti_object.py --dir /path/to/kitti/object
+python kitti_object.py -d /path/to/kitti/object
 ```
 
 ## Demo
@@ -60,7 +60,7 @@ Firstly, map KITTI official formated results into data directory
 ```
 
 ```python
-python kitti_object.py --pred
+python kitti_object.py -p
 ```
 <img src="./imgs/pred.png" alt="Show Predicted Results" align="center" />
 
