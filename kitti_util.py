@@ -476,7 +476,7 @@ def project_to_image(pts_3d, P):
     '''
     n = pts_3d.shape[0]
     pts_3d_extend = np.hstack((pts_3d, np.ones((n,1))))
-    print(('pts_3d_extend shape: ', pts_3d_extend.shape))
+    #print(('pts_3d_extend shape: ', pts_3d_extend.shape))
     pts_2d = np.dot(pts_3d_extend, np.transpose(P)) # nx3
     pts_2d[:,0] /= pts_2d[:,2]
     pts_2d[:,1] /= pts_2d[:,2]

@@ -174,7 +174,7 @@ def get_lidar_in_image_fov(pc_velo, calib, xmin, ymin, xmax, ymax,
         return imgfov_pc_velo
 
 def show_lidar_with_boxes(pc_velo, objects, calib, img_fov=False, img_width=None,
-                          img_height=None, objects_pred=None):
+        img_height=None, objects_pred=None):
     ''' Show all LiDAR points.
         Draw 3d box in LiDAR point cloud (in velo coord system) '''
     if 'mlab' not in sys.modules: import mayavi.mlab as mlab
@@ -223,6 +223,39 @@ def show_lidar_with_boxes(pc_velo, objects, calib, img_fov=False, img_width=None
                 tube_radius=None, line_width=1, figure=fig)
     mlab.show(1)
 
+def box_min_max(box3d):
+    box_min = np.min(box3d, axis=0)
+    box_max = np.max(box3d, axis=0)
+    return box_min, box_max
+
+def get_velo_whl(box3d, pc):
+    bmin, bmax = box_min_max(box3d)
+    ind = np.where((pc[:,0]>=bmin[0]) & (pc[:,0]<=bmax[0]) \
+                 & (pc[:,1]>=bmin[1]) & (pc[:,1]<=bmax[1]) \
+                 & (pc[:,2]>=bmin[2]) & (pc[:,2]<=bmax[2]))[0]
+    #print(pc[ind,:])
+    if len(ind)>0:
+        vmin, vmax = box_min_max(pc[ind,:])
+        return vmax - vmin
+    else:
+        return 0,0,0,0
+
+def stat_lidar_with_boxes(pc_velo, objects, calib):
+    ''' Show all LiDAR points.
+        Draw 3d box in LiDAR point cloud (in velo coord system) '''
+
+    #print(('All point num: ', pc_velo.shape[0]))
+
+    #draw_lidar(pc_velo, fig=fig)
+    #color=(0,1,0)
+    for obj in objects:
+        if obj.type=='DontCare':continue
+        box3d_pts_2d, box3d_pts_3d = utils.compute_box_3d(obj, calib.P)
+        box3d_pts_3d_velo = calib.project_rect_to_velo(box3d_pts_3d)
+        v_l, v_w, v_h,_ = get_velo_whl(box3d_pts_3d_velo, pc_velo)
+        print("%.4f %.4f %.4f %s"%(v_w, v_h, v_l, obj.type))
+
+
 def show_lidar_on_image(pc_velo, img, calib, img_width, img_height):
     ''' Project LiDAR points to image '''
     imgfov_pc_velo, pts_2d, fov_inds = get_lidar_in_image_fov(pc_velo,
@@ -255,10 +288,7 @@ def show_lidar_topview_with_boxes(pc_velo, objects, calib, objects_pred=None):
         box3d_pts_2d, box3d_pts_3d = utils.compute_box_3d(obj, calib.P)
         box3d_pts_3d_velo = calib.project_rect_to_velo(box3d_pts_3d)
         return box3d_pts_3d_velo
-            #box3d_pts_3d_velo = self.raw_calib.project_rect_to_velo(box3d_pts_3d)
-            #return box3d_pts_3d_velo
 
-        #boxes3d = [self.preprocess.bbox3d(obs) for obs in obstacles]
     boxes3d = [bbox3d(obj) for obj in objects if obj.type!='DontCare']
     gt = np.array(boxes3d)
     lines = [ obj.type for obj in objects if obj.type!='DontCare' ]
@@ -272,28 +302,32 @@ def show_lidar_topview_with_boxes(pc_velo, objects, calib, objects_pred=None):
 
     Image.fromarray(top_image).show()
 
-def dataset_viz(root_dir, show_pred=False):
+def dataset_viz(root_dir, args):
     dataset = kitti_object(root_dir)
 
     for data_idx in range(len(dataset)):
-        print("=====================>"+str(data_idx))
+        #print("=====================>"+str(data_idx))
         # Load data from dataset
         if not dataset.isexist_pred_objects(data_idx):
             continue
         objects = dataset.get_label_objects(data_idx)
-        objects[0].print_object()
+
         objects_pred = None
-        if show_pred:
+        if args.pred:
             objects_pred = dataset.get_pred_objects(data_idx)
             objects_pred[0].print_object()
 
         img = dataset.get_image(data_idx)
-        print(data_idx, 'Image shape: ', type(img))
+        #print(data_idx, 'Image shape: ', type(img))
         img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
         img_height, img_width, img_channel = img.shape
         #print(('Image shape: ', img.shape))
         pc_velo = dataset.get_lidar(data_idx)[:,0:4]
         calib = dataset.get_calibration(data_idx)
+        if args.stat:
+            stat_lidar_with_boxes(pc_velo, objects, calib)
+            continue
+        objects[0].print_object()
         # Draw lidar top view
         show_lidar_topview_with_boxes(pc_velo, objects, calib, objects_pred)
         pc_velo= pc_velo[:,0:3]
@@ -304,7 +338,6 @@ def dataset_viz(root_dir, show_pred=False):
         # Show LiDAR points on image.
         show_lidar_on_image(pc_velo, img, calib, img_width, img_height)
         input_str=raw_input()
-        print("input:",input_str)
 
         mlab.close(all=True)
         for proc in psutil.process_iter():
@@ -321,8 +354,9 @@ if __name__=='__main__':
     parser.add_argument('-d', '--dir', type=str, default="data/object", metavar='N',
                         help='input  (default: data/object)')
     parser.add_argument('-p','--pred', action='store_true', help='show predict results')
+    parser.add_argument('-s','--stat', action='store_true', help='stat the w/h/l of point cloud in gt bbox')
     args = parser.parse_args()
     if args.pred:
         assert os.path.exists(args.dir+"/training/pred")
 
-    dataset_viz(args.dir, args.pred)
+    dataset_viz(args.dir, args)
