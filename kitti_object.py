@@ -9,6 +9,7 @@ import os
 import sys
 import numpy as np
 import cv2
+import psutil
 from PIL import Image
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 ROOT_DIR = os.path.dirname(BASE_DIR)
@@ -275,6 +276,7 @@ def dataset_viz(root_dir, show_pred=False):
     dataset = kitti_object(root_dir)
 
     for data_idx in range(len(dataset)):
+        print("=====================>"+str(data_idx))
         # Load data from dataset
         if not dataset.isexist_pred_objects(data_idx):
             continue
@@ -301,7 +303,15 @@ def dataset_viz(root_dir, show_pred=False):
         show_lidar_with_boxes(pc_velo, objects, calib, True, img_width, img_height, objects_pred)
         # Show LiDAR points on image.
         show_lidar_on_image(pc_velo, img, calib, img_width, img_height)
-        raw_input()
+        input_str=raw_input()
+        print("input:",input_str)
+
+        mlab.close(all=True)
+        for proc in psutil.process_iter():
+            if proc.name() == "display":
+                proc.kill()
+        if input_str == "killall":
+            break
 
 if __name__=='__main__':
     import mayavi.mlab as mlab
