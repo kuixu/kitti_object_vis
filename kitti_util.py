@@ -1,13 +1,16 @@
 """ Helper methods for loading and parsing KITTI data.
 
-Author: Charles R. Qi
-Date: September 2017
+Author: Charles R. Qi, Kui Xu
+Date: September 2017/2018
 """
 from __future__ import print_function
 
 import numpy as np
 import cv2
 import os,math
+from scipy.optimize import leastsq
+from PIL import Image
+
 TOP_Y_MIN = -30
 TOP_Y_MAX = +30
 TOP_X_MIN = 0
@@ -18,6 +21,27 @@ TOP_Z_MAX = 0.6
 TOP_X_DIVISION = 0.2
 TOP_Y_DIVISION = 0.2
 TOP_Z_DIVISION = 0.3
+
+cbox = np.array([[0,70.4],[-40,40],[-3,2]])
+
+class Object2d(object):
+    ''' 2d object label '''
+    def __init__(self, label_file_line):
+        data = label_file_line.split(' ')
+
+        # extract label, truncation, occlusion
+        self.img_name = int(data[0]) # 'Car', 'Pedestrian', ...
+        self.typeid = int(data[1]) # truncated pixel ratio [0..1]
+        self.prob = float(data[2])
+        self.box2d = np.array([int(data[3]),int(data[4]),int(data[5]),int(data[6])])
+
+
+
+    def print_object(self):
+        print('img_name, typeid, prob: %s, %d, %f' % \
+            (self.img_name, self.typeid, self.prob))
+        print('2d bbox (x0,y0,x1,y1): %d, %d, %d, %d' % \
+            (self.box2d[0], self.box2d[1], self.box2d[2], self.box2d[3]))
 
 
 class Object3d(object):
@@ -245,6 +269,33 @@ class Calibration(object):
         return self.project_rect_to_velo(pts_3d_rect)
 
 
+    def project_depth_to_velo(self, depth, constraint_box=True):
+        depth_pt3d =  get_depth_pt3d(depth)
+        depth_UVDepth = np.zeros_like(depth_pt3d)
+        depth_UVDepth[:,0] = depth_pt3d[:,1]
+        depth_UVDepth[:,1] = depth_pt3d[:,0]
+        depth_UVDepth[:,2] = depth_pt3d[:,2]
+        #print("depth_pt3d:",depth_UVDepth.shape)
+        depth_pc_velo = self.project_image_to_velo(depth_UVDepth)
+        #print("dep_pc_velo:",depth_pc_velo.shape)
+        if constraint_box:
+            depth_box_fov_inds = (depth_pc_velo[:,0]< cbox[0][1] ) & \
+                (depth_pc_velo[:,0]>= cbox[0][0] ) & \
+                (depth_pc_velo[:,1]<  cbox[1][1]) & \
+                (depth_pc_velo[:,1]>= cbox[1][0]) & \
+                (depth_pc_velo[:,2]<  cbox[2][1]) & \
+                (depth_pc_velo[:,2]>= cbox[2][0])
+            depth_pc_velo=depth_pc_velo[depth_box_fov_inds]
+        return depth_pc_velo
+
+def get_depth_pt3d(depth):
+    pt3d=[]
+    for i in range(depth.shape[0]):
+        for j in range(depth.shape[1]):
+            pt3d.append([i, j, depth[i, j]])
+    return np.array(pt3d)
+
+
 def rotx(t):
     ''' 3D Rotation about the x-axis. '''
     c = np.cos(t)
@@ -296,9 +347,32 @@ def read_label(label_filename):
 def load_image(img_filename):
     return cv2.imread(img_filename)
 
+def load_depth_v(img_filename):
+    #return cv2.imread(img_filename)
+    disp_img = cv2.imread(img_filename, cv2.IMREAD_UNCHANGED)
+    disp_img = disp_img.astype(np.float)
+    return disp_img / 256.0
+def load_depth0(img_filename):
+    #return cv2.imread(img_filename)
+    depth_img = np.array(Image.open(img_filename), dtype=int)
+
+    depth_img = depth_img.astype(np.float)/ 256.0
+
+    return depth_img
+def load_depth(img_filename):
+    isexist = True
+    disp_img = cv2.imread(img_filename, cv2.IMREAD_UNCHANGED)
+    if disp_img is None:
+        isexist = False
+        disp_img =np.zeros((370,1224))
+    else:
+        disp_img = disp_img.astype(np.float)
+    return disp_img / 256.0, isexist
+
 def load_velo_scan(velo_filename):
-    scan = np.fromfile(velo_filename, dtype=np.float32)
-    scan = scan.reshape((-1, 4))
+    scan = np.fromfile(velo_filename, dtype=np.float64)
+    #scan = scan.reshape((-1, 4))
+    scan = scan.reshape((-1, 5))
     return scan
 
 def lidar_to_top_coords(x,y,z=None):
@@ -620,3 +694,48 @@ def draw_box3d_on_top(image, boxes3d, color=(255,255,255), thickness=1,scores=No
         text_pos = (startx, 25*(n+1))
         cv2.putText(img, text_lables[n], text_pos, font, 0.5, color, 0, cv2.LINE_AA)
     return  img
+
+
+
+
+#hypothesis function
+def hypothesis_func(w, x):
+    w1,w0 = w
+    return w1*x + w0
+
+#error function
+def error_func(w, train_x, train_y):
+    return hypothesis_func(w, train_x) - train_y
+
+def dump_fit_func(w_fit):
+    w1,w0=w_fit
+    print("fitting line=",str(w1)+"*x + "+str(w0))
+    return
+
+#square error平方差函数
+def dump_fit_cost(w_fit, train_x, train_y):
+    error = error_func(w_fit, train_x, train_y)
+    square_error = sum(e*e for e in error)
+    print('fitting cost:',str(square_error))
+    return square_error
+
+def linear_regression(train_x, train_y, test_x):
+    #train set
+    #train_x = np.array([8.19,2.72,6.39,8.71,4.7,2.66,3.78])
+    #train_y = np.array([7.01,2.78,6.47,6.71,4.1,4.23,4.05])
+
+    #linear regression by leastsq
+    #msg = "invoke scipy leastsq"
+    w_init = [20, 1]#weight factor init
+    fit_ret = leastsq(error_func, w_init, args=(train_x, train_y))
+    w_fit = fit_ret[0]
+
+    #dump fit result
+    dump_fit_func(w_fit)
+    fit_cost = dump_fit_cost(w_fit, train_x, train_y)
+
+    #test set
+    #test_x = np.array(np.arange(train_x.min(), train_x.max(), 1.0))
+    test_y = hypothesis_func(w_fit, test_x)
+    test_y0 = hypothesis_func(w_fit, train_x)
+    return test_y, test_y0
