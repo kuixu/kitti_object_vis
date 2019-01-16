@@ -12,6 +12,10 @@ The folder structure is as following:
 kitti
     object
         testing
+            calib
+            image_2
+            label_2
+            velodyne
         training
             calib
             image_2
