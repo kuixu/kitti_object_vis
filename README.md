@@ -44,8 +44,9 @@ pip install mayavi vtk
 $ python kitti_object.py --help
 usage: kitti_object.py [-h] [-d N] [-i N] [-p] [-s] [-l N] [-e N] [-r N]
                        [--gen_depth] [--vis] [--depth] [--img_fov]
-                       [--const_box] [--save_depth] [--show_lidar_on_image]
-                       [--show_lidar_with_depth] [--show_image_with_boxes]
+                       [--const_box] [--save_depth] [--pc_label]
+                       [--show_lidar_on_image] [--show_lidar_with_depth]
+                       [--show_image_with_boxes]
                        [--show_lidar_topview_with_boxes]
 
 PyTorch Training RPN
@@ -59,20 +60,21 @@ optional arguments:
   -l N, --lidar N       velodyne dir (default: velodyne)
   -e N, --depthdir N    depth dir (default: depth)
   -r N, --preddir N     predicted boxes (default: pred)
-  --gen_depth           load depth
-  --vis                 load depth
+  --gen_depth           generate depth
+  --vis                 show images
   --depth               load depth
   --img_fov             front view mapping
   --const_box           constraint box
-  --save_depth          constraint box
+  --save_depth          save depth into file
+  --pc_label            5-verctor lidar, pc with label
   --show_lidar_on_image
-                        constraint box
+                        project lidar on image
   --show_lidar_with_depth
-                        constraint box
+                        --show_lidar, depth is supported
   --show_image_with_boxes
-                        constraint box
+                        show lidar
   --show_lidar_topview_with_boxes
-                        constraint box
+                        show lidar topview
 
 ```
 
@@ -84,19 +86,24 @@ Specific your own folder,
 $ python kitti_object.py -d /path/to/kitti/object
 ```
 
-Show lidar only
+Show LiDAR only
 ```
 $ python kitti_object.py --show_lidar_with_depth --img_fov --const_box --vis
 ```
 
-Show lidar and image
+Show LiDAR and image
 ```
 $ python kitti_object.py --show_lidar_with_depth --img_fov --const_box --vis --show_image_with_boxes
 ```
 
-Show lidar and image with specific index
+Show LiDAR and image with specific index
 ```
 $ python kitti_object.py --show_lidar_with_depth --img_fov --const_box --vis --show_image_with_boxes --ind 100 
+```
+
+Show LiDAR with label (5 vector)
+```
+$ python kitti_object.py --show_lidar_with_depth --img_fov --const_box --vis --pc_label
 ```
 
 ## Demo
