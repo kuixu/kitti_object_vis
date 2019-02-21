@@ -110,7 +110,15 @@ def draw_lidar_simple(pc, color=None):
     mlab.view(azimuth=180, elevation=70, focalpoint=[ 12.0909996 , -1.04700089, -2.03249991], distance=62.0, figure=fig)
     return fig
 #pts_mode='sphere'
-def draw_lidar(pc, color=None, fig=None, bgcolor=(0,0,0), pts_scale=0.3, pts_mode='sphere', pts_color=None, color_by_intensity=False):
+def draw_lidar(pc,
+        color=None,
+        fig=None,
+        bgcolor=(0,0,0),
+        pts_scale=0.3,
+        pts_mode='sphere',
+        pts_color=None,
+        color_by_intensity=False,
+        pc_label=False):
     ''' Draw lidar points
     Args:
         pc: numpy array (n,3) of XYZ
@@ -124,15 +132,8 @@ def draw_lidar(pc, color=None, fig=None, bgcolor=(0,0,0), pts_scale=0.3, pts_mod
     pts_mode='point'
     print("====================",pc.shape)
     if fig is None: fig = mlab.figure(figure=None, bgcolor=bgcolor, fgcolor=None, engine=None, size=(1600, 1000))
-    if color is None:
-        color = pc[:,4]
-        #color = 10- pc[:,4]
-        #import pdb;pdb.set_trace()
-        #color[pc[:,4]==0] = 1
-        #color[pc[:,4]==1] = 2
-        #color[pc[:,4]==2] = 3
-        #color[pc[:,4]==3] = 4
-        #color[pc[:,4]==4] = 5
+    if color is None: color = pc[:,2]
+    if pc_label: color = pc[:,4]
     if color_by_intensity: color = pc[:,2]
 
     mlab.points3d(pc[:,0], pc[:,1], pc[:,2], color, color=pts_color, mode=pts_mode, colormap = 'gnuplot', scale_factor=pts_scale, figure=fig)

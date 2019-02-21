@@ -369,10 +369,9 @@ def load_depth(img_filename):
         disp_img = disp_img.astype(np.float)
     return disp_img / 256.0, isexist
 
-def load_velo_scan(velo_filename):
+def load_velo_scan(velo_filename, n_vec):
     scan = np.fromfile(velo_filename, dtype=np.float64)
-    #scan = scan.reshape((-1, 4))
-    scan = scan.reshape((-1, 5))
+    scan = scan.reshape((-1, n_vec))
     return scan
 
 def lidar_to_top_coords(x,y,z=None):
@@ -712,7 +711,7 @@ def dump_fit_func(w_fit):
     print("fitting line=",str(w1)+"*x + "+str(w0))
     return
 
-#square error平方差函数
+#square error
 def dump_fit_cost(w_fit, train_x, train_y):
     error = error_func(w_fit, train_x, train_y)
     square_error = sum(e*e for e in error)

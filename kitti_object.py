@@ -67,11 +67,11 @@ class kitti_object(object):
         img_filename = os.path.join(self.image_dir, '%06d.png'%(idx))
         return utils.load_image(img_filename)
 
-    def get_lidar(self, idx):
+    def get_lidar(self, idx, n_vec=4):
         assert(idx<self.num_samples)
         lidar_filename = os.path.join(self.lidar_dir, '%06d.bin'%(idx))
         print(lidar_filename)
-        return utils.load_velo_scan(lidar_filename)
+        return utils.load_velo_scan(lidar_filename, n_vec)
 
     def get_calibration(self, idx):
         assert(idx<self.num_samples)
@@ -294,8 +294,18 @@ def get_depth_pt3d(depth):
             pt3d.append([i, j, depth[i, j]])
     return np.array(pt3d)
 
-def show_lidar_with_depth(pc_velo, objects, calib, img_fov=False, img_width=None,
-        img_height=None, objects_pred=None, depth=None, cam_img=None, constraint_box=False,save=False):
+def show_lidar_with_depth(pc_velo,
+                          objects,
+                          calib,
+                          img_fov=False,
+                          img_width=None,
+                          img_height=None,
+                          objects_pred=None,
+                          depth=None,
+                          cam_img=None,
+                          constraint_box=False,
+                          pc_label=False,
+                          save=False):
     ''' Show all LiDAR points.
         Draw 3d box in LiDAR point cloud (in velo coord system) '''
     if 'mlab' not in sys.modules: import mayavi.mlab as mlab
@@ -310,7 +320,7 @@ def show_lidar_with_depth(pc_velo, objects, calib, img_fov=False, img_width=None
         pc_velo = pc_velo[pc_velo_index,:]
         print(('FOV point num: ', pc_velo.shape))
     print("pc_velo",pc_velo.shape)
-    draw_lidar(pc_velo, fig=fig)
+    draw_lidar(pc_velo, fig=fig, pc_label=pc_label)
 
     # Draw depth
     if depth is not None:
@@ -585,8 +595,10 @@ def dataset_viz(root_dir, args):
             print("no pred file")
             #objects_pred[0].print_object()
 
-        #pc_velo = dataset.get_lidar(data_idx)[:,0:4]
-        pc_velo = dataset.get_lidar(data_idx)[:,0:5]
+        n_vec = 4
+        if args.pc_label:
+            n_vec = 5
+        pc_velo = dataset.get_lidar(data_idx, n_vec)[:,0:n_vec]
         calib   = dataset.get_calibration(data_idx)
         img     = dataset.get_image(data_idx)
         img     = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
@@ -599,8 +611,6 @@ def dataset_viz(root_dir, args):
         else:
             depth=None
 
-
-
         #depth = cv2.cvtColor(depth, cv2.COLOR_BGR2RGB)
         #depth_height, depth_width, depth_channel = img.shape
 
@@ -610,11 +620,7 @@ def dataset_viz(root_dir, args):
             stat_lidar_with_boxes(pc_velo, objects, calib)
             continue
         objects[0].print_object()
-
-
-            # Draw 3d box in LiDAR point cloud
-
-
+        # Draw 3d box in LiDAR point cloud
         if args.show_lidar_topview_with_boxes:
            # Draw lidar top view
            show_lidar_topview_with_boxes(pc_velo, objects, calib, objects_pred)
@@ -626,7 +632,7 @@ def dataset_viz(root_dir, args):
         if args.show_lidar_with_depth:
             # Draw 3d box in LiDAR point cloud
             show_lidar_with_depth(pc_velo, objects, calib, args.img_fov, img_width, img_height, \
-                 objects_pred, depth, img, constraint_box=args.const_box, save=args.save_depth)
+                 objects_pred, depth, img, constraint_box=args.const_box, save=args.save_depth, pc_label=args.pc_label)
             #show_lidar_with_boxes(pc_velo, objects, calib, True, img_width, img_height, \
             #    objects_pred, depth, img)
         if args.show_lidar_on_image:
@@ -696,16 +702,17 @@ if __name__=='__main__':
                         help='depth dir  (default: depth)')
     parser.add_argument('-r','--preddir', type=str, default="pred", metavar='N',
                         help='predicted boxes  (default: pred)')
-    parser.add_argument('--gen_depth',  action='store_true', help='load depth')
-    parser.add_argument('--vis',  action='store_true', help='load depth')
+    parser.add_argument('--gen_depth',  action='store_true', help='generate depth')
+    parser.add_argument('--vis',  action='store_true', help='show images')
     parser.add_argument('--depth',  action='store_true', help='load depth')
     parser.add_argument('--img_fov',  action='store_true', help='front view mapping')
     parser.add_argument('--const_box',  action='store_true', help='constraint box')
-    parser.add_argument('--save_depth',  action='store_true', help='constraint box')
-    parser.add_argument('--show_lidar_on_image', action='store_true', help='constraint box')
-    parser.add_argument('--show_lidar_with_depth', action='store_true', help='constraint box')
-    parser.add_argument('--show_image_with_boxes', action='store_true', help='constraint box')
-    parser.add_argument('--show_lidar_topview_with_boxes', action='store_true', help='constraint box')
+    parser.add_argument('--save_depth',  action='store_true', help='save depth into file')
+    parser.add_argument('--pc_label',  action='store_true', help='5-verctor lidar, pc with label')
+    parser.add_argument('--show_lidar_on_image', action='store_true', help='project lidar on image')
+    parser.add_argument('--show_lidar_with_depth', action='store_true', help='--show_lidar, depth is supported')
+    parser.add_argument('--show_image_with_boxes', action='store_true', help='show lidar')
+    parser.add_argument('--show_lidar_topview_with_boxes', action='store_true', help='show lidar topview')
     args = parser.parse_args()
     if args.pred:
         assert os.path.exists(args.dir+"/training/pred")
