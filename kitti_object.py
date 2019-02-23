@@ -713,7 +713,7 @@ if __name__=='__main__':
     parser.add_argument('--const_box',  action='store_true', help='constraint box')
     parser.add_argument('--save_depth',  action='store_true', help='save depth into file')
     parser.add_argument('--pc_label',  action='store_true', help='5-verctor lidar, pc with label')
-    parser.add_argument('--dtype64',  action='store_true', help='float64, for float')
+    parser.add_argument('--dtype64',  action='store_true', help='for float64 datatype, default float64')
     
     parser.add_argument('--show_lidar_on_image', action='store_true', help='project lidar on image')
     parser.add_argument('--show_lidar_with_depth', action='store_true', help='--show_lidar, depth is supported')
