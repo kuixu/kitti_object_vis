@@ -369,8 +369,8 @@ def load_depth(img_filename):
         disp_img = disp_img.astype(np.float)
     return disp_img / 256.0, isexist
 
-def load_velo_scan(velo_filename, n_vec):
-    scan = np.fromfile(velo_filename, dtype=np.float64)
+def load_velo_scan(velo_filename, dtype=np.float32, n_vec=4):
+    scan = np.fromfile(velo_filename, dtype=dtype)
     scan = scan.reshape((-1, n_vec))
     return scan
 
