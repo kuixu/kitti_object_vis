@@ -67,11 +67,11 @@ class kitti_object(object):
         img_filename = os.path.join(self.image_dir, '%06d.png'%(idx))
         return utils.load_image(img_filename)
 
-    def get_lidar(self, idx, n_vec=4):
+    def get_lidar(self, idx, dtype=np.float64, n_vec=4):
         assert(idx<self.num_samples)
         lidar_filename = os.path.join(self.lidar_dir, '%06d.bin'%(idx))
         print(lidar_filename)
-        return utils.load_velo_scan(lidar_filename, n_vec)
+        return utils.load_velo_scan(lidar_filename, dtype, n_vec)
 
     def get_calibration(self, idx):
         assert(idx<self.num_samples)
@@ -598,7 +598,11 @@ def dataset_viz(root_dir, args):
         n_vec = 4
         if args.pc_label:
             n_vec = 5
-        pc_velo = dataset.get_lidar(data_idx, n_vec)[:,0:n_vec]
+            
+        dtype=np.float32
+        if args.dtype64:
+            dtype=np.float64
+        pc_velo = dataset.get_lidar(data_idx, dtype, n_vec)[:,0:n_vec]
         calib   = dataset.get_calibration(data_idx)
         img     = dataset.get_image(data_idx)
         img     = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
@@ -709,6 +713,8 @@ if __name__=='__main__':
     parser.add_argument('--const_box',  action='store_true', help='constraint box')
     parser.add_argument('--save_depth',  action='store_true', help='save depth into file')
     parser.add_argument('--pc_label',  action='store_true', help='5-verctor lidar, pc with label')
+    parser.add_argument('--dtype64',  action='store_true', help='float64, for float')
+    
     parser.add_argument('--show_lidar_on_image', action='store_true', help='project lidar on image')
     parser.add_argument('--show_lidar_with_depth', action='store_true', help='--show_lidar, depth is supported')
     parser.add_argument('--show_image_with_boxes', action='store_true', help='show lidar')
