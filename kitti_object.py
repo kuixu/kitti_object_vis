@@ -623,7 +623,14 @@ def dataset_viz(root_dir, args):
         if args.stat:
             stat_lidar_with_boxes(pc_velo, objects, calib)
             continue
-        objects[0].print_object()
+        print("======== Objects in Ground Truth ========")
+        n_obj = 0
+        for obj in objects:
+            if obj.type != 'DontCare':
+                print("=== {} object ===".format(n_obj+1))
+                obj.print_object()
+                n_obj += 1
+
         # Draw 3d box in LiDAR point cloud
         if args.show_lidar_topview_with_boxes:
            # Draw lidar top view

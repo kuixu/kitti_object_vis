@@ -70,6 +70,20 @@ class Object3d(object):
         self.t = (data[11],data[12],data[13]) # location (x,y,z) in camera coord.
         self.ry = data[14] # yaw angle (around Y-axis in camera coordinates) [-pi..pi]
 
+    def estimate_diffculty(self):
+        """ Function that estimate difficulty to detect the object as defined in kitti website"""
+        # height of the bounding box
+        bb_height = np.abs(self.xmax - self.xmin)
+
+        if bb_height >= 40 and self.occlusion == 0 and self.truncation <= 0.15:
+            return "Easy"
+        elif bb_height >= 25 and self.occlusion in [0,1] and self.truncation <= 0.30:
+            return "Moderate"
+        elif bb_height >= 25 and self.occlusion in [0,1,2] and self.truncation <= 0.50:
+            return "Hard"
+        else:
+            return "Unknown"
+
     def print_object(self):
         print('Type, truncation, occlusion, alpha: %s, %d, %d, %f' % \
             (self.type, self.truncation, self.occlusion, self.alpha))
@@ -79,6 +93,7 @@ class Object3d(object):
             (self.h, self.w, self.l))
         print('3d bbox location, ry: (%f, %f, %f), %f' % \
             (self.t[0],self.t[1],self.t[2],self.ry))
+        print('Difficulty of estimation: {}'.format(self.estimate_diffculty()))
 
 
 class Calibration(object):
