@@ -58,7 +58,6 @@ class kitti_object(object):
         self.depth_dir = os.path.join(self.split_dir, depth_dir)
         self.pred_dir  = os.path.join(self.split_dir, pred_dir)
 
-
     def __len__(self):
         return self.num_samples
 
@@ -249,10 +248,8 @@ def show_image_with_boxes_3type(img, objects, calib, objects2d, name, objects_pr
             text_pos = (startx, 25*(n+1))
             cv2.putText(img1, text_lables[n], text_pos, font, 0.5, color, 0, cv2.LINE_AA)
 
-
     Image.fromarray(img1).show()
     cv2.imwrite("imgs/"+str(name)+".png", img1)
-
 
 
 def get_lidar_in_image_fov(pc_velo, calib, xmin, ymin, xmax, ymax,
@@ -404,7 +401,7 @@ def save_depth0(data_idx, pc_velo, calib, img_fov, img_width, img_height, \
     depth_pc=depth_pc.astype(np.float32)
     depth_pc.tofile(save_filename)
 
-def save_depth(data_idx, pc_velo, calib, img_fov, img_width, img_height, \
+def save_depth(data_idx, pc_velo, calib, img_fov, img_width, img_height,
                depth, constraint_box=False):
 
     if depth is not None:
@@ -676,10 +673,9 @@ def depth_to_lidar_format(root_dir, args):
         #depth_height, depth_width, depth_channel = img.shape
 
         #print(('Image shape: ', img.shape))
-        save_depth(data_idx, pc_velo, calib, args.img_fov, img_width, img_height, \
-                       depth, constraint_box=args.const_box)
-        input_str=raw_input()
-
+        save_depth(data_idx, pc_velo, calib, args.img_fov, img_width, img_height,
+                   depth, constraint_box=args.const_box)
+        input_str = raw_input()
 
 
 def read_det_file(det_filename):
