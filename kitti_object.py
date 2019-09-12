@@ -9,8 +9,6 @@ import os
 import sys
 import numpy as np
 import cv2
-import psutil
-from PIL import Image
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 ROOT_DIR = os.path.dirname(BASE_DIR)
 sys.path.append(os.path.join(ROOT_DIR, 'mayavi'))
@@ -165,7 +163,7 @@ def viz_kitti_video():
     for i in range(len(dataset)):
         img = dataset.get_image(0)
         pc = dataset.get_lidar(0)
-        Image.fromarray(img).show()
+        cv2.imshow("video", img)
         draw_lidar(pc)
         raw_input()
         pc[:,0:3] = dataset.get_calibration().project_velo_to_rect(pc[:,0:3])
@@ -191,15 +189,15 @@ def show_image_with_boxes(img, objects, calib, show3d=True, depth=None):
         #box3d_pts_32d = calib.project_velo_to_image(box3d_pts_3d_velo)
         #img3 = utils.draw_projected_box3d(img3, box3d_pts_32d)
     #print("img1:", img1.shape)
-    Image.fromarray(img1).show()
+    cv2.imshow("2dbox", img1)
     #print("img3:",img3.shape)
     #Image.fromarray(img3).show()
     show3d=True
     if show3d:
         #print("img2:",img2.shape)
-        Image.fromarray(img2).show()
+        cv2.imshow("3dbox", img2)
     if depth is not None:
-        Image.fromarray(depth).show()
+        cv2.imshow("depth", depth)
 
 def show_image_with_boxes_3type(img, objects, calib, objects2d, name, objects_pred):
     ''' Show image with 2D bounding boxes '''
@@ -248,7 +246,7 @@ def show_image_with_boxes_3type(img, objects, calib, objects2d, name, objects_pr
             text_pos = (startx, 25*(n+1))
             cv2.putText(img1, text_lables[n], text_pos, font, 0.5, color, 0, cv2.LINE_AA)
 
-    Image.fromarray(img1).show()
+    cv2.imshow("with_bbox", img1)
     cv2.imwrite("imgs/"+str(name)+".png", img1)
 
 
@@ -538,7 +536,7 @@ def show_lidar_on_image(pc_velo, img, calib, img_width, img_height):
         cv2.circle(img, (int(np.round(imgfov_pts_2d[i,0])),
             int(np.round(imgfov_pts_2d[i,1]))),
             2, color=tuple(color), thickness=-1)
-    Image.fromarray(img).show()
+    cv2.imshow("projection", img)
     return img
 
 def show_lidar_topview_with_boxes(pc_velo, objects, calib, objects_pred=None):
@@ -566,7 +564,7 @@ def show_lidar_topview_with_boxes(pc_velo, objects, calib, objects_pred=None):
         lines = [ obj.type for obj in objects_pred if obj.type!='DontCare' ]
         top_image = utils.draw_box3d_on_top(top_image, gt, text_lables=lines, scores=None, thickness=1, is_gt=False)
 
-    Image.fromarray(top_image).show()
+    cv2.imshow("top_image", top_image)
 
 def dataset_viz(root_dir, args):
     dataset = kitti_object(root_dir, split=args.split, args=args)
@@ -655,9 +653,6 @@ def dataset_viz(root_dir, args):
         input_str=raw_input()
 
         mlab.clf()
-        for proc in psutil.process_iter():
-            if proc.name() == "display":
-                proc.kill()
         if input_str == "killall":
             break
 
