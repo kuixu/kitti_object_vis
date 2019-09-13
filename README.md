@@ -23,7 +23,7 @@ kitti
             velodyne
 ```
 
-## Requrements
+## Requirements
 
 1. mayavi
 2. vtk
