@@ -606,7 +606,6 @@ def dataset_viz(root_dir, args):
         pc_velo = dataset.get_lidar(data_idx, dtype, n_vec)[:,0:n_vec]
         calib   = dataset.get_calibration(data_idx)
         img     = dataset.get_image(data_idx)
-        img     = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
         img_height, img_width, img_channel = img.shape
         print(data_idx, 'image shape: ', img.shape)
         print(data_idx, 'velo  shape: ', pc_velo.shape)
@@ -665,7 +664,6 @@ def depth_to_lidar_format(root_dir, args):
         calib           = dataset.get_calibration(data_idx)
         depth, is_exist = dataset.get_depth(data_idx)
         img             = dataset.get_image(data_idx)
-        img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
         img_height, img_width, img_channel = img.shape
         print(data_idx, 'image shape: ', img.shape)
         print(data_idx, 'velo  shape: ', pc_velo.shape)
