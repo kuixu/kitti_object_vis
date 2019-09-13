@@ -75,6 +75,7 @@ optional arguments:
                         show lidar
   --show_lidar_topview_with_boxes
                         show lidar topview
+  --split               use training split or testing split (default: training)
 
 ```
 

@@ -58,7 +58,6 @@ class kitti_object(object):
         self.depth_dir = os.path.join(self.split_dir, depth_dir)
         self.pred_dir  = os.path.join(self.split_dir, pred_dir)
 
-
     def __len__(self):
         return self.num_samples
 
@@ -84,7 +83,7 @@ class kitti_object(object):
         return utils.read_label(label_filename)
 
     def get_pred_objects(self, idx):
-        assert(idx<self.num_samples and self.split=='training')
+        assert(idx<self.num_samples)
         pred_filename = os.path.join(self.pred_dir, '%06d.txt'%(idx))
         is_exist = os.path.exists(pred_filename)
         if is_exist:
@@ -249,10 +248,8 @@ def show_image_with_boxes_3type(img, objects, calib, objects2d, name, objects_pr
             text_pos = (startx, 25*(n+1))
             cv2.putText(img1, text_lables[n], text_pos, font, 0.5, color, 0, cv2.LINE_AA)
 
-
     Image.fromarray(img1).show()
     cv2.imwrite("imgs/"+str(name)+".png", img1)
-
 
 
 def get_lidar_in_image_fov(pc_velo, calib, xmin, ymin, xmax, ymax,
@@ -404,7 +401,7 @@ def save_depth0(data_idx, pc_velo, calib, img_fov, img_width, img_height, \
     depth_pc=depth_pc.astype(np.float32)
     depth_pc.tofile(save_filename)
 
-def save_depth(data_idx, pc_velo, calib, img_fov, img_width, img_height, \
+def save_depth(data_idx, pc_velo, calib, img_fov, img_width, img_height,
                depth, constraint_box=False):
 
     if depth is not None:
@@ -574,14 +571,17 @@ def show_lidar_topview_with_boxes(pc_velo, objects, calib, objects_pred=None):
     Image.fromarray(top_image).show()
 
 def dataset_viz(root_dir, args):
-    dataset = kitti_object(root_dir, args=args)
+    dataset = kitti_object(root_dir, split=args.split, args=args)
     ## load 2d detection results
     objects2ds = read_det_file('box2d.list')
     for data_idx in range(len(dataset)):
         if args.ind>0:
             data_idx=args.ind
         # Load data from dataset
-        objects = dataset.get_label_objects(data_idx)
+        if args.split == 'training':
+            objects = dataset.get_label_objects(data_idx)
+        else:
+            objects = []
         objects2d = objects2ds[data_idx]
 
         objects_pred = None
@@ -659,7 +659,7 @@ def dataset_viz(root_dir, args):
             break
 
 def depth_to_lidar_format(root_dir, args):
-    dataset = kitti_object(root_dir, args=args)
+    dataset = kitti_object(root_dir, split=args.split, args=args)
     for data_idx in range(len(dataset)):
         # Load data from dataset
 
@@ -676,10 +676,9 @@ def depth_to_lidar_format(root_dir, args):
         #depth_height, depth_width, depth_channel = img.shape
 
         #print(('Image shape: ', img.shape))
-        save_depth(data_idx, pc_velo, calib, args.img_fov, img_width, img_height, \
-                       depth, constraint_box=args.const_box)
-        input_str=raw_input()
-
+        save_depth(data_idx, pc_velo, calib, args.img_fov, img_width, img_height,
+                   depth, constraint_box=args.const_box)
+        input_str = raw_input()
 
 
 def read_det_file(det_filename):
@@ -707,6 +706,8 @@ if __name__=='__main__':
                         help='input  (default: data/object)')
     parser.add_argument('-p','--pred', action='store_true', help='show predict results')
     parser.add_argument('-s','--stat', action='store_true', help=' stat the w/h/l of point cloud in gt bbox')
+    parser.add_argument('--split', type=str,  default='training',
+                        help='use training split or testing split (default: training)')
     parser.add_argument('-l','--lidar', type=str, default="velodyne", metavar='N',
                         help='velodyne dir  (default: velodyne)')
     parser.add_argument('-e','--depthdir', type=str, default="depth", metavar='N',
@@ -728,7 +729,7 @@ if __name__=='__main__':
     parser.add_argument('--show_lidar_topview_with_boxes', action='store_true', help='show lidar topview')
     args = parser.parse_args()
     if args.pred:
-        assert os.path.exists(args.dir+"/training/pred")
+        assert os.path.exists(args.dir+"/" + args.split + "/pred")
 
     if args.vis:
         dataset_viz(args.dir, args)
