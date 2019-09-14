@@ -294,6 +294,7 @@ def get_depth_pt3d(depth):
 def show_lidar_with_depth(pc_velo,
                           objects,
                           calib,
+                          fig,
                           img_fov=False,
                           img_width=None,
                           img_height=None,
@@ -305,12 +306,9 @@ def show_lidar_with_depth(pc_velo,
                           save=False):
     ''' Show all LiDAR points.
         Draw 3d box in LiDAR point cloud (in velo coord system) '''
-    if 'mlab' not in sys.modules: import mayavi.mlab as mlab
     from viz_util import draw_lidar_simple, draw_lidar, draw_gt_boxes3d
 
     print(('All point num: ', pc_velo.shape[0]))
-    fig = mlab.figure(figure=None, bgcolor=(0,0,0),
-        fgcolor=None, engine=None, size=(1000, 500))
     if img_fov:
         pc_velo_index = get_lidar_index_in_image_fov(pc_velo[:,:3], calib, 0, 0,
             img_width, img_height)
@@ -574,6 +572,11 @@ def dataset_viz(root_dir, args):
     dataset = kitti_object(root_dir, split=args.split, args=args)
     ## load 2d detection results
     objects2ds = read_det_file('box2d.list')
+
+    if args.show_lidar_with_depth:
+        import mayavi.mlab as mlab
+        fig = mlab.figure(figure=None, bgcolor=(0,0,0),
+                          fgcolor=None, engine=None, size=(1000, 500))
     for data_idx in range(len(dataset)):
         if args.ind>0:
             data_idx=args.ind
@@ -642,7 +645,7 @@ def dataset_viz(root_dir, args):
             show_image_with_boxes(img, objects, calib, True, depth)
         if args.show_lidar_with_depth:
             # Draw 3d box in LiDAR point cloud
-            show_lidar_with_depth(pc_velo, objects, calib, args.img_fov, img_width, img_height, \
+            show_lidar_with_depth(pc_velo, objects, calib, fig, args.img_fov, img_width, img_height, \
                  objects_pred, depth, img, constraint_box=args.const_box, save=args.save_depth, pc_label=args.pc_label)
             #show_lidar_with_boxes(pc_velo, objects, calib, True, img_width, img_height, \
             #    objects_pred, depth, img)
@@ -651,7 +654,7 @@ def dataset_viz(root_dir, args):
             show_lidar_on_image(pc_velo[:,0:3], img, calib, img_width, img_height)
         input_str=raw_input()
 
-        mlab.close(all=True)
+        mlab.clf()
         for proc in psutil.process_iter():
             if proc.name() == "display":
                 proc.kill()
