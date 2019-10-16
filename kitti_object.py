@@ -848,7 +848,7 @@ if __name__ == "__main__":
     import mayavi.mlab as mlab
     from viz_util import draw_lidar_simple, draw_lidar, draw_gt_boxes3d
 
-    parser = argparse.ArgumentParser(description="PyTorch Training RPN")
+    parser = argparse.ArgumentParser(description="KIITI Object Visualization")
     parser.add_argument(
         "-d",
         "--dir",
