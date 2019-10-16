@@ -54,7 +54,7 @@ usage: kitti_object.py [-h] [-d N] [-i N] [-p] [-s] [-l N] [-e N] [-r N]
                        [--show_image_with_boxes]
                        [--show_lidar_topview_with_boxes]
 
-PyTorch Training RPN
+KIITI Object Visualization
 
 optional arguments:
   -h, --help            show this help message and exit
