@@ -382,7 +382,7 @@ def show_lidar_with_depth(
 
         if save:
             data_idx = 0
-            vely_dir = "data/obj/training/depth_pc"
+            vely_dir = "data/object/training/depth_pc"
             save_filename = os.path.join(vely_dir, "%06d.bin" % (data_idx))
             print(save_filename)
             # np.save(save_filename+".npy", np.array(depth_pc_velo))
@@ -462,7 +462,7 @@ def save_depth0(
         depth_pc = np.concatenate((pc_velo, depth_pc_velo), axis=0)
         print("depth_pc:", depth_pc.shape)
 
-    vely_dir = "data/obj/training/depth_pc"
+    vely_dir = "data/object/training/depth_pc"
     save_filename = os.path.join(vely_dir, "%06d.bin" % (data_idx))
 
     depth_pc = depth_pc.astype(np.float32)
@@ -488,7 +488,7 @@ def save_depth(
 
         print("depth_pc:", depth_pc.shape)
 
-    vely_dir = "data/obj/training/depth_pc"
+    vely_dir = "data/object/training/depth_pc"
     save_filename = os.path.join(vely_dir, "%06d.bin" % (data_idx))
 
     depth_pc = depth_pc.astype(np.float32)
@@ -853,7 +853,7 @@ if __name__ == "__main__":
         "-d",
         "--dir",
         type=str,
-        default="data/obj",
+        default="data/object",
         metavar="N",
         help="input  (default: data/object)",
     )
