@@ -399,7 +399,7 @@ def show_lidar_with_depth(
         print("box3d_pts_3d_velo:")
         print(box3d_pts_3d_velo)
 
-        draw_gt_boxes3d([box3d_pts_3d_velo], fig=fig, color=color)
+        draw_gt_boxes3d([box3d_pts_3d_velo], fig=fig, color=color, label=obj.type)
 
     if objects_pred is not None:
         color = (1, 0, 0)
