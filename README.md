@@ -45,7 +45,7 @@ conda install mayavi vtk pillow
 4. LiDar data on Camera image
 
 
-```python
+```shell
 $ python kitti_object.py --help
 usage: kitti_object.py [-h] [-d N] [-i N] [-p] [-s] [-l N] [-e N] [-r N]
                        [--gen_depth] [--vis] [--depth] [--img_fov]
@@ -84,11 +84,11 @@ optional arguments:
 
 ```
 
-```python
+```shell
 $ python kitti_object.py
 ```
 Specific your own folder,
-```python
+```shell
 $ python kitti_object.py -d /path/to/kitti/object
 ```
 
