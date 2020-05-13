@@ -32,9 +32,9 @@ conda install opencv -c menpo
   - mayavi, vtk, PIL
 
 ```
-pip install mayavi vtk pillow
+pip install mayavi vtk pillow pyqt5
 # or
-conda install mayavi vtk pillow
+conda install mayavi vtk pillow pyqt5
 ```
 
 ## Visualization
