@@ -26,13 +26,12 @@ kitti
 ## Requirements
 - start from a new conda enviornment:
 ```
-(base)$ conda create -n kitti_vis python=3.6 # TODO: testing with python 3.7 and 3.8
+(base)$ conda create -n kitti_vis python=3.7 # vkt does not support python 3.8
 (base)$ conda activate kitti_vis
 ```
 - opencv, pillow, scipy
 ```
-(kitti_vis)$ conda install opencv -c menpo
-(kitti_vis)$ pip install pillow scipy
+(kitti_vis)$ pip install opencv-python pillow scipy
 ```
 - mayavi
 ```
