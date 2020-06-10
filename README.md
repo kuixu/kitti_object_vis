@@ -44,6 +44,9 @@ kitti
 
 **Call for help: the above installing has been tested not work on MacOS.**
 
+## Install remotely
+Please refer to the [jupyter](jupyter/README.md) for installing on a remote server and visulizing in Jupyter Notebook.
+
 ## Visualization
 
 1. 3D boxes on LiDar point cloud in volumetric mode
