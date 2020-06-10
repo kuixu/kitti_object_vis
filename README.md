@@ -24,17 +24,20 @@ kitti
 ```
 
 ## Requirements
-
-  - opencv
+- start from a new conda enviornment:
+```
+conda create -n kitti_vis python=3.6 # TODO: testing with python 3.7 and 3.8
+```
+- opencv, pillow, scipy
 ```
 conda install opencv -c menpo
+pip install pillow scipy
 ```
-  - mayavi, vtk, PIL
-
+- mayavi
 ```
-pip install mayavi vtk pillow pyqt5
-# or
-conda install mayavi vtk pillow pyqt5
+pip install vtk 
+conda install pyqt -c conda-forge # it seems that install pyqt from pip leads to missing header files
+pip install mayavi
 ```
 
 ## Visualization
