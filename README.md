@@ -26,18 +26,23 @@ kitti
 ## Requirements
 - start from a new conda enviornment:
 ```
-conda create -n kitti_vis python=3.6 # TODO: testing with python 3.7 and 3.8
+(base)$ conda create -n kitti_vis python=3.6 # TODO: testing with python 3.7 and 3.8
+(base)$ conda activate kitti_vis
 ```
 - opencv, pillow, scipy
 ```
-conda install opencv -c menpo
-pip install pillow scipy
+(kitti_vis)$ conda install opencv -c menpo
+(kitti_vis)$ pip install pillow scipy
 ```
 - mayavi
 ```
-pip install vtk 
-conda install pyqt -c conda-forge # it seems that install pyqt from pip leads to missing header files
-pip install mayavi
+(kitti_vis)$ pip install vtk 
+(kitti_vis)$ conda install pyqt -c conda-forge # it seems that install pyqt from pip leads to missing header files
+(kitti_vis)$ pip install mayavi
+```
+- test installing
+```
+(kitti_vis)$ python kitti_object.py --show_lidar_with_depth --img_fov --const_box --vis
 ```
 
 ## Visualization
