@@ -45,7 +45,7 @@ kitti
 **Call for help: the above installing has been tested not work on MacOS.**
 
 ## Install remotely
-Please refer to the [jupyter](jupyter/README.md) for installing on a remote server and visulizing in Jupyter Notebook.
+Please refer to the [jupyter](jupyter/) folder for installing on a remote server and visulizing in Jupyter Notebook.
 
 ## Visualization
 
