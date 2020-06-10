@@ -23,10 +23,10 @@ kitti
             velodyne
 ```
 
-## Requirements
+## Install locally on Ubuntu 16.04 PC with GUI
 - start from a new conda enviornment:
 ```
-(base)$ conda create -n kitti_vis python=3.7 # vkt does not support python 3.8
+(base)$ conda create -n kitti_vis python=3.7 # vtk does not support python 3.8
 (base)$ conda activate kitti_vis
 ```
 - opencv, pillow, scipy
@@ -35,14 +35,16 @@ kitti
 ```
 - mayavi
 ```
-(kitti_vis)$ pip install vtk 
-(kitti_vis)$ conda install pyqt -c conda-forge # it seems that install pyqt from pip leads to missing header files
-(kitti_vis)$ pip install mayavi
+(kitti_vis)$ pip install vtk
+(kitti_vis)$ conda install pyqt -c conda-forge # pyqt5 from pip seems missing some dependencies
+(kitti_vis)$ pip install mayavi # install mayavi at the final step since it is built on vtk and pyqt 
 ```
 - test installing
 ```
 (kitti_vis)$ python kitti_object.py --show_lidar_with_depth --img_fov --const_box --vis
 ```
+
+**Note: the above installing has been tested not work on MacOS.**
 
 ## Visualization
 
