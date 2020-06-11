@@ -1,4 +1,5 @@
 # Install remotely on a Ubuntu 16.04 server and visulize by Jupyter Notebook
+## Install mayavi
 - remote servers usually lack GUI supports, so first some libraries and backends should be installed
 ```
 (base)$ sudo apt-get update && sudo apt-get install libgl1-mesa-glx xvfb
@@ -25,3 +26,8 @@
 (kitti_vis)$ jupyter nbextension install --py --sys-prefix mayavi
 (kitti_vis)$ jupyter nbextension enable --py --sys-prefix mayavi
 ```
+- to test on Jupyter notebook, first set [ETS_TOOLKIT](https://github.com/enthought/mayavi/issues/439#issuecomment-251703994)
+```
+(kitti_vis)$ export ETS_TOOLKIT='null'
+```
+- then you can test mayavi intallation by [this notebook](test_mayavi.ipynb), which should show an interactive 3D curve
