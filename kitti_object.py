@@ -170,7 +170,7 @@ def viz_kitti_video():
         video_path,
     )
     print(len(dataset))
-    for i in range(len(dataset)):
+    for _ in range(len(dataset)):
         img = dataset.get_image(0)
         pc = dataset.get_lidar(0)
         cv2.imshow("video", img)
@@ -186,7 +186,7 @@ def show_image_with_boxes(img, objects, calib, show3d=True, depth=None):
     """ Show image with 2D bounding boxes """
     img1 = np.copy(img)  # for 2d bbox
     img2 = np.copy(img)  # for 3d bbox
-    img3 = np.copy(img)  # for 3d bbox
+    #img3 = np.copy(img)  # for 3d bbox
     for obj in objects:
         if obj.type == "DontCare":
             continue
@@ -197,7 +197,7 @@ def show_image_with_boxes(img, objects, calib, show3d=True, depth=None):
             (0, 255, 0),
             2,
         )
-        box3d_pts_2d, box3d_pts_3d = utils.compute_box_3d(obj, calib.P)
+        box3d_pts_2d, _ = utils.compute_box_3d(obj, calib.P)
         img2 = utils.draw_projected_box3d(img2, box3d_pts_2d)
 
         # project
@@ -396,7 +396,7 @@ def show_lidar_with_depth(
         if obj.type == "DontCare":
             continue
         # Draw 3d bounding box
-        box3d_pts_2d, box3d_pts_3d = utils.compute_box_3d(obj, calib.P)
+        _, box3d_pts_3d = utils.compute_box_3d(obj, calib.P)
         box3d_pts_3d_velo = calib.project_rect_to_velo(box3d_pts_3d)
         print("box3d_pts_3d_velo:")
         print(box3d_pts_3d_velo)
@@ -409,13 +409,13 @@ def show_lidar_with_depth(
             if obj.type == "DontCare":
                 continue
             # Draw 3d bounding box
-            box3d_pts_2d, box3d_pts_3d = utils.compute_box_3d(obj, calib.P)
+            _, box3d_pts_3d = utils.compute_box_3d(obj, calib.P)
             box3d_pts_3d_velo = calib.project_rect_to_velo(box3d_pts_3d)
             print("box3d_pts_3d_velo:")
             print(box3d_pts_3d_velo)
             draw_gt_boxes3d([box3d_pts_3d_velo], fig=fig, color=color)
             # Draw heading arrow
-            ori3d_pts_2d, ori3d_pts_3d = utils.compute_orientation_3d(obj, calib.P)
+            _, ori3d_pts_3d = utils.compute_orientation_3d(obj, calib.P)
             ori3d_pts_3d_velo = calib.project_rect_to_velo(ori3d_pts_3d)
             x1, y1, z1 = ori3d_pts_3d_velo[0, :]
             x2, y2, z2 = ori3d_pts_3d_velo[1, :]
@@ -532,7 +532,7 @@ def show_lidar_with_boxes(
         if obj.type == "DontCare":
             continue
         # Draw 3d bounding box
-        box3d_pts_2d, box3d_pts_3d = utils.compute_box_3d(obj, calib.P)
+        _, box3d_pts_3d = utils.compute_box_3d(obj, calib.P)
         box3d_pts_3d_velo = calib.project_rect_to_velo(box3d_pts_3d)
         print("box3d_pts_3d_velo:")
         print(box3d_pts_3d_velo)
@@ -555,7 +555,7 @@ def show_lidar_with_boxes(
         #
 
         # Draw heading arrow
-        ori3d_pts_2d, ori3d_pts_3d = utils.compute_orientation_3d(obj, calib.P)
+        _, ori3d_pts_3d = utils.compute_orientation_3d(obj, calib.P)
         ori3d_pts_3d_velo = calib.project_rect_to_velo(ori3d_pts_3d)
         x1, y1, z1 = ori3d_pts_3d_velo[0, :]
         x2, y2, z2 = ori3d_pts_3d_velo[1, :]
@@ -574,13 +574,13 @@ def show_lidar_with_boxes(
             if obj.type == "DontCare":
                 continue
             # Draw 3d bounding box
-            box3d_pts_2d, box3d_pts_3d = utils.compute_box_3d(obj, calib.P)
+            _, box3d_pts_3d = utils.compute_box_3d(obj, calib.P)
             box3d_pts_3d_velo = calib.project_rect_to_velo(box3d_pts_3d)
             print("box3d_pts_3d_velo:")
             print(box3d_pts_3d_velo)
             draw_gt_boxes3d([box3d_pts_3d_velo], fig=fig, color=color)
             # Draw heading arrow
-            ori3d_pts_2d, ori3d_pts_3d = utils.compute_orientation_3d(obj, calib.P)
+            _, ori3d_pts_3d = utils.compute_orientation_3d(obj, calib.P)
             ori3d_pts_3d_velo = calib.project_rect_to_velo(ori3d_pts_3d)
             x1, y1, z1 = ori3d_pts_3d_velo[0, :]
             x2, y2, z2 = ori3d_pts_3d_velo[1, :]
@@ -631,7 +631,7 @@ def stat_lidar_with_boxes(pc_velo, objects, calib):
     for obj in objects:
         if obj.type == "DontCare":
             continue
-        box3d_pts_2d, box3d_pts_3d = utils.compute_box_3d(obj, calib.P)
+        _, box3d_pts_3d = utils.compute_box_3d(obj, calib.P)
         box3d_pts_3d_velo = calib.project_rect_to_velo(box3d_pts_3d)
         v_l, v_w, v_h, _ = get_velo_whl(box3d_pts_3d_velo, pc_velo)
         print("%.4f %.4f %.4f %s" % (v_w, v_h, v_l, obj.type))
@@ -673,7 +673,7 @@ def show_lidar_topview_with_boxes(pc_velo, objects, calib, objects_pred=None):
     # gt
 
     def bbox3d(obj):
-        box3d_pts_2d, box3d_pts_3d = utils.compute_box_3d(obj, calib.P)
+        _, box3d_pts_3d = utils.compute_box_3d(obj, calib.P)
         box3d_pts_3d_velo = calib.project_rect_to_velo(box3d_pts_3d)
         return box3d_pts_3d_velo
 
@@ -699,7 +699,7 @@ def show_lidar_topview_with_boxes(pc_velo, objects, calib, objects_pred=None):
 def dataset_viz(root_dir, args):
     dataset = kitti_object(root_dir, split=args.split, args=args)
     ## load 2d detection results
-    objects2ds = read_det_file("box2d.list")
+    #objects2ds = read_det_file("box2d.list")
 
     if args.show_lidar_with_depth:
         import mayavi.mlab as mlab
@@ -715,7 +715,7 @@ def dataset_viz(root_dir, args):
             objects = dataset.get_label_objects(data_idx)
         else:
             objects = []
-        objects2d = objects2ds[data_idx]
+        #objects2d = objects2ds[data_idx]
 
         objects_pred = None
         if args.pred:
@@ -738,11 +738,11 @@ def dataset_viz(root_dir, args):
         pc_velo = dataset.get_lidar(data_idx, dtype, n_vec)[:, 0:n_vec]
         calib = dataset.get_calibration(data_idx)
         img = dataset.get_image(data_idx)
-        img_height, img_width, img_channel = img.shape
+        img_height, img_width, _ = img.shape
         print(data_idx, "image shape: ", img.shape)
         print(data_idx, "velo  shape: ", pc_velo.shape)
         if args.depth:
-            depth, is_exist = dataset.get_depth(data_idx)
+            depth, _ = dataset.get_depth(data_idx)
             print(data_idx, "depth shape: ", depth.shape)
         else:
             depth = None
@@ -808,9 +808,9 @@ def depth_to_lidar_format(root_dir, args):
 
         pc_velo = dataset.get_lidar(data_idx)[:, 0:4]
         calib = dataset.get_calibration(data_idx)
-        depth, is_exist = dataset.get_depth(data_idx)
+        depth, _ = dataset.get_depth(data_idx)
         img = dataset.get_image(data_idx)
-        img_height, img_width, img_channel = img.shape
+        img_height, img_width, _ = img.shape
         print(data_idx, "image shape: ", img.shape)
         print(data_idx, "velo  shape: ", pc_velo.shape)
         print(data_idx, "depth shape: ", depth.shape)
@@ -828,12 +828,12 @@ def depth_to_lidar_format(root_dir, args):
             depth,
             constraint_box=args.const_box,
         )
-        input_str = raw_input()
+        #input_str = raw_input()
 
 
 def read_det_file(det_filename):
     """ Parse lines in 2D detection output files """
-    det_id2str = {1: "Pedestrian", 2: "Car", 3: "Cyclist"}
+    #det_id2str = {1: "Pedestrian", 2: "Car", 3: "Cyclist"}
     objects = {}
     with open(det_filename, "r") as f:
         for line in f.readlines():
