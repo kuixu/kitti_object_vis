@@ -67,7 +67,7 @@ class kitti_object(object):
         img_filename = os.path.join(self.image_dir, "%06d.png" % (idx))
         return utils.load_image(img_filename)
 
-    def get_lidar(self, idx, dtype=np.float64, n_vec=4):
+    def get_lidar(self, idx, dtype=np.float32, n_vec=4):
         assert idx < self.num_samples
         lidar_filename = os.path.join(self.lidar_dir, "%06d.bin" % (idx))
         print(lidar_filename)
@@ -357,6 +357,8 @@ def show_lidar_with_depth(
 ):
     """ Show all LiDAR points.
         Draw 3d box in LiDAR point cloud (in velo coord system) """
+    if "mlab" not in sys.modules:
+        import mayavi.mlab as mlab
     from viz_util import draw_lidar_simple, draw_lidar, draw_gt_boxes3d
 
     print(("All point num: ", pc_velo.shape[0]))
