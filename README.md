@@ -37,12 +37,12 @@ kitti
 ```
 (kitti_vis)$ conda install mayavi -c conda-forge
 ```
-- test installing
+- test installation
 ```
 (kitti_vis)$ python kitti_object.py --show_lidar_with_depth --img_fov --const_box --vis
 ```
 
-**Note: the above installing has been tested not work on MacOS.**
+**Note: the above installation has been tested not work on MacOS.**
 
 ## Install remotely
 Please refer to the [jupyter](jupyter/) folder for installing on a remote server and visulizing in Jupyter Notebook.
