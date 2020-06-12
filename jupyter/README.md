@@ -34,3 +34,5 @@
 
 ## Use Jupyter Notebook for visulization
 - Here is a simple [demo](../notebook_demo.ipynb).
+
+**Note: the above installing has been tested successful on [an official PyTorch docker image](https://hub.docker.com/layers/pytorch/pytorch/1.5-cuda10.1-cudnn7-devel/images/sha256-449d5b98aa911955f55cb3ab413b81b34861ab5f4244519099328df282275690?context=explore).**

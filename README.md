@@ -42,7 +42,7 @@ kitti
 (kitti_vis)$ python kitti_object.py --show_lidar_with_depth --img_fov --const_box --vis
 ```
 
-**Call for help: the above installing has been tested not work on MacOS.**
+**Note: the above installing has been tested not work on MacOS.**
 
 ## Install remotely
 Please refer to the [jupyter](jupyter/) folder for installing on a remote server and visulizing in Jupyter Notebook.
