@@ -29,11 +29,11 @@ kitti
 (base)$ conda create -n kitti_vis python=3.7 # vtk does not support python 3.8
 (base)$ conda activate kitti_vis
 ```
-- opencv, pillow, scipy
+- opencv, pillow, scipy, matplotlib
 ```
 (kitti_vis)$ pip install opencv-python pillow scipy matplotlib
 ```
-- install mayavi from conda-forge, this install vtk and pyqt5 automatically
+- install mayavi from conda-forge, this installs vtk and pyqt5 automatically
 ```
 (kitti_vis)$ conda install mayavi -c conda-forge
 ```
