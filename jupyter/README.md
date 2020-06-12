@@ -31,3 +31,6 @@
 (kitti_vis)$ export ETS_TOOLKIT='null'
 ```
 - then you can test mayavi intallation by [this notebook](test_mayavi.ipynb), which should show an interactive 3D curve
+
+## Use Jupyter Notebook for visulization
+- Here is a simple [demo](../notebook_demo.ipynb).

@@ -215,6 +215,8 @@ def show_image_with_boxes(img, objects, calib, show3d=True, depth=None):
         cv2.imshow("3dbox", img2)
     if depth is not None:
         cv2.imshow("depth", depth)
+    
+    return img1, img2
 
 
 def show_image_with_boxes_3type(img, objects, calib, objects2d, name, objects_pred):
@@ -552,7 +554,6 @@ def show_lidar_with_boxes(
             print("dep_pc_velo:", dep_pc_velo)
 
             draw_lidar(dep_pc_velo, fig=fig, pts_color=(1, 1, 1))
-        #
 
         # Draw heading arrow
         _, ori3d_pts_3d = utils.compute_orientation_3d(obj, calib.P)
@@ -639,6 +640,7 @@ def stat_lidar_with_boxes(pc_velo, objects, calib):
 
 def show_lidar_on_image(pc_velo, img, calib, img_width, img_height):
     """ Project LiDAR points to image """
+    img =  np.copy(img)
     imgfov_pc_velo, pts_2d, fov_inds = get_lidar_in_image_fov(
         pc_velo, calib, 0, 0, img_width, img_height, True
     )
@@ -694,6 +696,7 @@ def show_lidar_topview_with_boxes(pc_velo, objects, calib, objects_pred=None):
         )
 
     cv2.imshow("top_image", top_image)
+    return top_image
 
 
 def dataset_viz(root_dir, args):
