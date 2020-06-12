@@ -8,7 +8,7 @@
 ```
 (base)$ conda create -n kitti_vis python=3.7
 (base)$ conda activate kitti_vis
-(kitti_vis)$ pip install opencv-python pillow scipy xvfbwrapper
+(kitti_vis)$ pip install opencv-python pillow scipy matplotlib xvfbwrapper
 (kitti_vis)$ conda install mayavi -c conda-forge
 ```
 - install jupyter notebook
