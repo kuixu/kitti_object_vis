@@ -57,7 +57,7 @@ def rotation_matrix_numpy0(axis, theta, dtype=None):
 
 
 def rotation_matrix_numpy(axis, theta):
-    mat = np.eye(3, 3)
+
     axis = axis / np.sqrt(np.dot(axis, axis))
     a = np.cos(theta / 2.0)
     b, c, d = -axis * np.sin(theta / 2.0)
@@ -261,8 +261,8 @@ def draw_lidar(
     TOP_Y_MAX = 20
     TOP_X_MIN = 0
     TOP_X_MAX = 40
-    TOP_Z_MIN = -2.0
-    TOP_Z_MAX = 0.4
+    #TOP_Z_MIN = -2.0
+    #TOP_Z_MAX = 0.4
 
     x1 = TOP_X_MIN
     x2 = TOP_X_MAX

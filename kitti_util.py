@@ -414,17 +414,14 @@ def load_velo_scan(velo_filename, dtype=np.float32, n_vec=4):
     return scan
 
 
-def lidar_to_top_coords(x, y, z=None):
-    if 0:
-        return x, y
-    else:
-        # print("TOP_X_MAX-TOP_X_MIN:",TOP_X_MAX,TOP_X_MIN)
-        X0, Xn = 0, int((TOP_X_MAX - TOP_X_MIN) // TOP_X_DIVISION) + 1
-        Y0, Yn = 0, int((TOP_Y_MAX - TOP_Y_MIN) // TOP_Y_DIVISION) + 1
-        xx = Yn - int((y - TOP_Y_MIN) // TOP_Y_DIVISION)
-        yy = Xn - int((x - TOP_X_MIN) // TOP_X_DIVISION)
+def lidar_to_top_coords(x, y):
+    # print("TOP_X_MAX-TOP_X_MIN:",TOP_X_MAX,TOP_X_MIN)
+    Xn = int((TOP_X_MAX - TOP_X_MIN) // TOP_X_DIVISION) + 1
+    Yn = int((TOP_Y_MAX - TOP_Y_MIN) // TOP_Y_DIVISION) + 1
+    xx = Yn - int((y - TOP_Y_MIN) // TOP_Y_DIVISION)
+    yy = Xn - int((x - TOP_X_MIN) // TOP_X_DIVISION)
 
-        return xx, yy
+    return xx, yy
 
 
 def lidar_to_top(lidar):
@@ -789,7 +786,7 @@ def linear_regression(train_x, train_y, test_x):
 
     # dump fit result
     dump_fit_func(w_fit)
-    fit_cost = dump_fit_cost(w_fit, train_x, train_y)
+    dump_fit_cost(w_fit, train_x, train_y)
 
     # test set
     # test_x = np.array(np.arange(train_x.min(), train_x.max(), 1.0))
