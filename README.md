@@ -140,7 +140,7 @@ Firstly, map KITTI official formated results into data directory
 ```
 
 ```python
-python kitti_object.py -p
+python kitti_object.py -p --vis
 ```
 <img src="./imgs/pred.png" alt="Show Predicted Results" align="center" />
 
