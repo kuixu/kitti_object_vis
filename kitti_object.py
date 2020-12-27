@@ -430,9 +430,9 @@ def show_lidar_with_depth(
         #TODO: change the color of boxes
         if obj.type == "Car":
             draw_gt_boxes3d([box3d_pts_3d_velo], fig=fig, color=(0,1,0), label=obj.type)
-        if obj.type == "Pedestrian":
+        elif obj.type == "Pedestrian":
             draw_gt_boxes3d([box3d_pts_3d_velo], fig=fig, color=(0,1,1), label=obj.type)
-        if obj.type == "Cyclist":
+        elif obj.type == "Cyclist":
             draw_gt_boxes3d([box3d_pts_3d_velo], fig=fig, color=(1,1,0), label=obj.type)
 
 
