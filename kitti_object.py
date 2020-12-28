@@ -187,18 +187,42 @@ def show_image_with_boxes(img, objects, calib, show3d=True, depth=None):
     img1 = np.copy(img)  # for 2d bbox
     img2 = np.copy(img)  # for 3d bbox
     #img3 = np.copy(img)  # for 3d bbox
+    #TODO: change the color of boxes
     for obj in objects:
         if obj.type == "DontCare":
             continue
-        cv2.rectangle(
+        if obj.type == "Car":
+            cv2.rectangle(
             img1,
             (int(obj.xmin), int(obj.ymin)),
             (int(obj.xmax), int(obj.ymax)),
             (0, 255, 0),
             2,
         )
+        if obj.type == "Pedestrian":
+            cv2.rectangle(
+            img1,
+            (int(obj.xmin), int(obj.ymin)),
+            (int(obj.xmax), int(obj.ymax)),
+            (255, 255, 0),
+            2,
+        )
+        if obj.type == "Cyclist":
+            cv2.rectangle(
+            img1,
+            (int(obj.xmin), int(obj.ymin)),
+            (int(obj.xmax), int(obj.ymax)),
+            (0, 255, 255),
+            2,
+        )
         box3d_pts_2d, _ = utils.compute_box_3d(obj, calib.P)
-        img2 = utils.draw_projected_box3d(img2, box3d_pts_2d)
+        if obj.type == "Car":
+            img2 = utils.draw_projected_box3d(img2, box3d_pts_2d, color=(0, 255, 0))
+        elif obj.type == "Pedestrian":
+            img2 = utils.draw_projected_box3d(img2, box3d_pts_2d, color=(255, 255, 0))
+        elif obj.type == "Cyclist":
+            img2 = utils.draw_projected_box3d(img2, box3d_pts_2d, color=(0, 255, 255))
+
 
         # project
         # box3d_pts_3d_velo = calib.project_rect_to_velo(box3d_pts_3d)
@@ -393,7 +417,7 @@ def show_lidar_with_depth(
             depth_pc_velo = depth_pc_velo.astype(np.float32)
             depth_pc_velo.tofile(save_filename)
 
-    color = (0, 1, 0)
+    # color = (0, 1, 0)
     for obj in objects:
         if obj.type == "DontCare":
             continue
@@ -403,7 +427,14 @@ def show_lidar_with_depth(
         print("box3d_pts_3d_velo:")
         print(box3d_pts_3d_velo)
 
-        draw_gt_boxes3d([box3d_pts_3d_velo], fig=fig, color=color, label=obj.type)
+        #TODO: change the color of boxes
+        if obj.type == "Car":
+            draw_gt_boxes3d([box3d_pts_3d_velo], fig=fig, color=(0,1,0), label=obj.type)
+        elif obj.type == "Pedestrian":
+            draw_gt_boxes3d([box3d_pts_3d_velo], fig=fig, color=(0,1,1), label=obj.type)
+        elif obj.type == "Cyclist":
+            draw_gt_boxes3d([box3d_pts_3d_velo], fig=fig, color=(1,1,0), label=obj.type)
+
 
     if objects_pred is not None:
         color = (1, 0, 0)
