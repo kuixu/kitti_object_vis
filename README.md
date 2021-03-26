@@ -114,7 +114,7 @@ $ python kitti_object.py --show_lidar_with_depth --img_fov --const_box --vis --s
 
 Show LiDAR and image with specific index
 ```
-$ python kitti_object.py --show_lidar_with_depth --img_fov --const_box --vis --show_image_with_boxes --ind 100 
+$ python kitti_object.py --show_lidar_with_depth --img_fov --const_box --vis --show_image_with_boxes --ind 1 
 ```
 
 Show LiDAR with label (5 vector)
