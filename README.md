@@ -13,14 +13,26 @@ kitti
     object
         testing
             calib
+               000000.txt
             image_2
+               000000.png
             label_2
+               000000.txt
             velodyne
+               000000.bin
+            pred
+               000000.txt
         training
             calib
+               000000.txt
             image_2
+               000000.png
             label_2
+               000000.txt
             velodyne
+               000000.bin
+            pred
+               000000.txt
 ```
 
 ## Install locally on a Ubuntu 16.04 PC with GUI
