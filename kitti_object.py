@@ -216,6 +216,9 @@ def show_image_with_boxes(img, objects, calib, show3d=True, depth=None):
             2,
         )
         box3d_pts_2d, _ = utils.compute_box_3d(obj, calib.P)
+        if box3d_pts_2d is None:
+            print("something wrong in the 3D box.")
+            continue
         if obj.type == "Car":
             img2 = utils.draw_projected_box3d(img2, box3d_pts_2d, color=(0, 255, 0))
         elif obj.type == "Pedestrian":
