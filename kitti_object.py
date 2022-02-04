@@ -35,14 +35,14 @@ class kitti_object(object):
         self.split_dir = os.path.join(root_dir, split)
 
         if split == "training":
-            self.num_samples = 7481
+            self.num_samples = 997481
         elif split == "testing":
-            self.num_samples = 7518
+            self.num_samples = 979518
         else:
             print("Unknown split: %s" % (split))
             exit(-1)
 
-        lidar_dir = "velodyne"
+        lidar_dir = "velodyne_02"
         depth_dir = "depth"
         pred_dir = "pred"
         if args is not None:
@@ -50,9 +50,9 @@ class kitti_object(object):
             depth_dir = args.depthdir
             pred_dir = args.preddir
 
-        self.image_dir = os.path.join(self.split_dir, "image_2")
-        self.label_dir = os.path.join(self.split_dir, "label_2")
-        self.calib_dir = os.path.join(self.split_dir, "calib")
+        self.image_dir = os.path.join(self.split_dir, "image_02")
+        self.label_dir = os.path.join(self.split_dir, "label_02")
+        self.calib_dir = os.path.join(self.split_dir, "calib_02")
 
         self.depthpc_dir = os.path.join(self.split_dir, "depth_pc")
         self.lidar_dir = os.path.join(self.split_dir, lidar_dir)
@@ -892,7 +892,7 @@ if __name__ == "__main__":
         "-d",
         "--dir",
         type=str,
-        default="data/object",
+        default="_out_2LiDAR",
         metavar="N",
         help="input  (default: data/object)",
     )
@@ -900,7 +900,7 @@ if __name__ == "__main__":
         "-i",
         "--ind",
         type=int,
-        default=0,
+        default="0",
         metavar="N",
         help="input  (default: data/object)",
     )
@@ -923,7 +923,7 @@ if __name__ == "__main__":
         "-l",
         "--lidar",
         type=str,
-        default="velodyne",
+        default="velodyne_02",
         metavar="N",
         help="velodyne dir  (default: velodyne)",
     )
